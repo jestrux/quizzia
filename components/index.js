@@ -2,6 +2,6 @@ import Tabs from "./tabs.js";
 import Pane from "./pane.js";
 
 angular
-	.module("components", [])
+	.module("Components", [])
 	.directive("tabs", Tabs)
 	.directive("pane", Pane);
