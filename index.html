@@ -8,9 +8,11 @@
 
 		<link rel="stylesheet" href="css/app.css" />
 		<script src="lib/angular-1.8.min.js"></script>
+		<script src="lib/angular-router-1.8.min.js"></script>
 	</head>
-	<body ng-controller="AppController">
-		<game />
+	<body>
+		<!-- <game /> -->
+		<div ng-view></div>
 
 		<script type="module" defer>
 			window.DEV_MODE = true;

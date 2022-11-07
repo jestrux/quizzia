@@ -1,10 +1,13 @@
-export default async function GameController($scope, GameService) {
+export default function GameController($scope, GameService) {
 	$scope.currentIndex = -1;
 	$scope.questions = [];
-	$scope.nextQuestion = function () {};
 
-	const questions = (await GameService.fetchQuestions()).filterByType(
-		"regular"
-	);
-	console.log("Game questions: ", questions);
+	this.answerQuestion = function (answer) {
+		console.log("Answer: ", answer);
+	};
+
+	(async function () {
+		const questions = (await GameService.fetchQuestions()).all("regular");
+		console.log("Game questions: ", questions);
+	})();
 }
