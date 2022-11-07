@@ -23,9 +23,8 @@ export default function GameService() {
 				);
 				if (questions?.length && lastCacheTime?.toString().length) {
 					const cacheAge =
-						(Date.now() - new Date(1667832287756)) / 1000 / 60;
-
-					if (cacheAge > 5)
+						(Date.now() - new Date(lastCacheTime)) / 1000 / 60;
+					if (cacheAge > 10)
 						localStorage.removeItem("GAME_QUESTIONS_CACHE");
 
 					return questions;
@@ -47,6 +46,8 @@ export default function GameService() {
 			console.log("Fetching questions...");
 
 			return new Promise((resolve, rej) => {
+				// Basic caching to prevent rate limiting from Airtable
+				// during development
 				const cachedQuestions = this.__cachedQuestions;
 				if (cachedQuestions?.length) {
 					self.questions = cachedQuestions;
