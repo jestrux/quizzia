@@ -1,0 +1,14 @@
+{
+	"name": "quizzia",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"watch": "npx tailwindcss -i ./css/tailwind.css -o ./css/app.css --watch"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"tailwindcss": "^3.2.1"
+	}
+}
