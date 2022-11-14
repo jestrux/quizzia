@@ -35,7 +35,7 @@
 							<collapsible-step
 								step="1"
 								title="What type of data are you importing?"
-								expanded="{{vm.currentStep == 1}}"
+								expanded="vm.currentStep == 1"
 							>
 								<div class="grid grid-cols-4 gap-2">
 									<label
@@ -131,11 +131,20 @@
 										/>
 									</label>
 								</div>
+
+								<div class="mt-6">
+									<button
+										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 2"
+									>
+										Next
+									</button>
+								</div>
 							</collapsible-step>
 							<collapsible-step
 								step="2"
 								title="Select data source"
-								expanded="{{vm.currentStep == 2}}"
+								expanded="vm.currentStep == 2"
 							>
 								<div
 									class="relative min-h-[170px] bg-neutral-100/80 text-neutral-500/80 border-2 border-neutral-400 border-dashed rounded flex flex-col items-center justify-center gap-4"
@@ -154,12 +163,26 @@
 										or choose file
 									</button>
 								</div>
+
+								<div class="mt-6 -ml-4 flex items-center gap-">
+									<button
+										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 1"
+									>
+										Previous
+									</button>
+									<button
+										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 3"
+									>
+										Next
+									</button>
+								</div>
 							</collapsible-step>
 							<collapsible-step
-								is-last="true"
 								step="3"
 								title="What action do you want to perform?"
-								expanded="{{vm.currentStep == 2}}"
+								expanded="vm.currentStep == 3"
 							>
 								<div
 									class="border-2 rounded overflow-hidden divide-y"
@@ -173,10 +196,6 @@
                                             'text-neutral-600/80': vm.importAction != action
                                         }"
 									>
-										<!-- <div
-											class="pointer-events-none absolute -inset-y-px -inset-x-0.5 border-2 border-primary"
-											ng-class="{'opacity-0': vm.importAction != action}"
-										></div> -->
 										<input
 											ngId="{{action}}"
 											type="radio"
@@ -187,6 +206,66 @@
 
 										<span class="text-s"> {{action}} </span>
 									</label>
+								</div>
+
+								<div class="mt-6 -ml-4 flex items-center gap-">
+									<button
+										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 2"
+									>
+										Previous
+									</button>
+									<button
+										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 4"
+									>
+										Next
+									</button>
+								</div>
+							</collapsible-step>
+							<collapsible-step
+								is-last="true"
+								step="4"
+								title="Format your data to work with SetHero"
+								expanded="vm.currentStep == 4"
+							>
+								<div
+									class="border-2 rounded overflow-hidden divide-y"
+								>
+									<label
+										ng-repeat="action in importActions"
+										ngFor="{{action}}"
+										class="overflow-hidden cursor-pointer relative flex items-center py-2 px-3 gap-3"
+										ng-class="{
+                                            'bg-primary-light text-primary': vm.importAction == action, 
+                                            'text-neutral-600/80': vm.importAction != action
+                                        }"
+									>
+										<input
+											ngId="{{action}}"
+											type="radio"
+											name="importAction"
+											ng-value="action"
+											ng-model="vm.importAction"
+										/>
+
+										<span class="text-s"> {{action}} </span>
+									</label>
+								</div>
+
+								<div class="mt-6 -ml-4 flex items-center gap-">
+									<button
+										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 3"
+									>
+										Previous
+									</button>
+									<button
+										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 4"
+									>
+										Next
+									</button>
 								</div>
 							</collapsible-step>
 						</div>
