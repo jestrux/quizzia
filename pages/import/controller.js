@@ -16,7 +16,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.decoArray = Array(300).fill(Math.random());
 
 	$scope.vm = {
-		currentStep: 4,
+		currentStep: 1,
 		importAction: "",
 		importType: "",
 		columnMap: {},
