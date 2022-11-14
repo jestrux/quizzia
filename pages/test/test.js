@@ -34,12 +34,8 @@ export default function TestUI() {
 						<div class="mt-8">
 							<div ng-repeat="question in questions" class="mb-12">
 								<div class="py-12">
-									<regular-question ng-if="question.Type == 'regular'" question="question">
-									</regular-question>
-									<one-plus-one-question ng-if="question.Type == 'one plus one'" question="question">
-									</one-plus-one-question>
-									<image-answers-question ng-if="question.Type == 'image answers'" question="question">
-									</image-answers-question>
+									<question question="question">
+									</question>
 								</div>
 							</div>
 						</div>

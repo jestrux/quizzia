@@ -8,12 +8,13 @@ export default function Game() {
 		controller: GameController,
 		template: /*html*/ `
 			<ng-transclude>
-				<div class="">
-					<h1 class="font-bold text-xl">
-						The game
-					</h1>
-					
-					<a-question ng-repeat="question in questions" />
+				<div class="my-8 mx-auto max-w-4xl">
+					<div ng-repeat="(index, question) in questions" class="mb-12">
+						<div class="py-12" ng-show="index == currentIndex">
+							<question question="question">
+							</question>
+						</div>
+					</div>
 				</div>
 			</ng-transclude>
 		`,

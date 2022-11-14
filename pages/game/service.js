@@ -1,4 +1,4 @@
-import Airtable from "../lib/airtable.js";
+import Airtable from "../../assets/lib/airtable.js";
 
 export default function GameService() {
 	const API_KEY = "key7rYj7BDKm9wwS2";

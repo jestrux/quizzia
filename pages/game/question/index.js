@@ -11,9 +11,12 @@ export default function Question() {
 		},
 		template: /*html*/ `
 		<div>
-			<regular-question ng-if="question.Type == 'regular'" question="question" />
-			<one-plus-one-question ng-if="question.Type == 'one plus one'" question="question" />
-			<image-answers-question ng-if="question.Type == 'image answers'" question="question" />
+			<regular-question ng-if="question.Type == 'regular'" question="question">
+			</regular-question>
+			<one-plus-one-question ng-if="question.Type == 'one plus one'" question="question">
+			</one-plus-one-question>
+			<image-answers-question ng-if="question.Type == 'image answers'" question="question">
+			</image-answers-question>
 		</div>
 		`,
 	};
