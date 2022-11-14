@@ -3396,6 +3396,10 @@ select {
   background-color: rgb(14 52 114 / 0.05);
 }
 
+.hover\:bg-primary\/95:hover {
+  background-color: rgb(14 52 114 / 0.95);
+}
+
 .hover\:font-bold:hover {
   font-weight: 700;
 }
