@@ -226,26 +226,63 @@
 							<collapsible-step
 								is-last="true"
 								step="4"
-								title="Format your data to work with SetHero"
+								title="Map your data to work with SetHero"
 								expanded="vm.currentStep == 4"
 							>
 								<div
-									class="border-2 rounded overflow-hidden divide-y"
+									class="mt-6 border-2 rounded-md overflow-hidden divide-y"
 								>
 									<div
 										ng-repeat="column in columns"
 										ngFor="{{action}}"
-										class="overflow-hidden cursor-pointer relative flex items-center py-2 px-3 gap-3"
+										class="overflow-hidden cursor-pointer relative flex items-center py-2 pl-3.5 pr-2 gap-3"
 									>
-										<span class="text-neutral-600/80">
+										<span
+											class="font-medium text-neutral-600/80"
+										>
 											{{column}}
 										</span>
+
+										<div
+											class="flex-1 flex items-center text-neutral-400/60"
+										>
+											<div
+												class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
+											></div>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke-width="1.5"
+												stroke="currentColor"
+												class="w-6 h-6"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													d="M8.25 4.5l7.5 7.5-7.5 7.5"
+												/>
+											</svg>
+										</div>
+
+										<select
+											class="w-[140px] text-xs rounded-full bg-gray-100/80 border-neutral-200/80 shadow-none"
+											ng-model="vm.columnMap[column]"
+										>
+											<option value="">Choose one</option>
+											<option
+												ng-value="option"
+												ng-repeat="option in incomingColumns"
+											>
+												{{ option }}
+											</option>
+										</select>
 									</div>
 								</div>
 
 								<div class="mt-6 flex items-center gap-">
 									<button
-										class="w-full px-4 py-2.5 bg-primary hover:bg-primary/95 border border-primary text-white text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										class="w-full px-4 py-3 bg-primary hover:bg-primary/95 border border-primary text-white text-sm font-medium leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 4"
 									>
 										Complete
