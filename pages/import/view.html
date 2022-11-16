@@ -1,6 +1,6 @@
 <div>
 	<app-layout>
-		<div class="fixed inset-0 z-50 spl-16 bg-black/60">
+		<div class="fixed inset-0 z-50 bg-black/60">
 			<div class="h-full bg-white shadow-2xl srounded-tl-[50px]">
 				<div class="relative z-10 h-full flex">
 					<div class="w-[500px]">
@@ -31,11 +31,12 @@
 								Import data to SetHero
 							</h2>
 						</div>
-						<div class="px-6">
+						<div class="px-3.5">
 							<collapsible-step
 								step="1"
 								heading="Add your data"
 								expanded="vm.currentStep == 1"
+								completed="completedSteps.includes(1)"
 							>
 								<div>
 									<div
@@ -45,7 +46,7 @@
 											ng-repeat="choice in importFromKeys"
 											class="-mb-px py-3.5 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
 											ng-class="{
-												'text-accent border-accent': vm.importFrom == importFromChoices[choice],
+												'border-accent': vm.importFrom == importFromChoices[choice],
 												'border-transparent text-neutral-400 hover:text-neutral-500/90': vm.importFrom != importFromChoices[choice],
 											}"
 											ng-click="vm.importFrom = importFromChoices[choice]"
@@ -125,6 +126,7 @@
 								step="2"
 								heading="What type of data are you importing?"
 								expanded="vm.currentStep == 2"
+								completed="completedSteps.includes(2)"
 							>
 								<div class="grid grid-cols-4 gap-2">
 									<label
@@ -240,24 +242,25 @@
 								step="3"
 								heading="What action do you want to perform?"
 								expanded="vm.currentStep == 3"
+								completed="completedSteps.includes(3)"
 							>
 								<div
 									class="border-2 rounded overflow-hidden divide-y"
 								>
 									<label
-										ng-repeat="action in importActions"
+										ng-repeat="action in importActionsChoices"
 										ngFor="{{action}}"
 										class="overflow-hidden cursor-pointer relative flex items-center py-2 px-3 gap-3"
 										ng-class="{
-                                            'bg-primary-light text-primary': vm.importAction == action, 
-                                            'text-neutral-600/80': vm.importAction != action
+                                            'bg-primary-light text-primary': vm.importAction == importActions[action],
+                                            'text-neutral-600/80': vm.importAction != importActions[action]
                                         }"
 									>
 										<input
 											ngId="{{action}}"
 											type="radio"
 											name="importAction"
-											ng-value="action"
+											ng-value="importActions[action]"
 											ng-model="vm.importAction"
 										/>
 
@@ -284,23 +287,24 @@
 								step="4"
 								heading="Map your data to work with SetHero"
 								expanded="vm.currentStep == 4"
+								completed="completedSteps.includes(4)"
 							>
 								<div
 									class="mt-6 border-2 rounded-md overflow-hidden divide-y"
 								>
 									<div
-										ng-repeat="column in columns"
+										ng-repeat="column in incomingColumns"
 										ngFor="{{action}}"
 										class="overflow-hidden cursor-pointer relative flex items-center py-2 pl-3.5 pr-2 gap-3"
 									>
 										<span
-											class="font-medium text-neutral-600/80"
+											class="text-sm font-semibold text-neutral-600/80"
 										>
 											{{column}}
 										</span>
 
 										<div
-											class="flex-1 flex items-center text-neutral-400/60"
+											class="-mr-2 flex-1 flex items-center text-neutral-400/60"
 										>
 											<div
 												class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
@@ -322,13 +326,13 @@
 										</div>
 
 										<select
-											class="w-[140px] text-xs rounded-full bg-gray-100/80 border-neutral-200/80 shadow-none"
+											class="focus:ring-0 w-[140px] py-1.5 text-xs rounded-full bg-gray-100/80 border-neutral-200/80 shadow-none"
 											ng-model="vm.columnMap[column]"
 										>
 											<option value="">Choose one</option>
 											<option
 												ng-value="option"
-												ng-repeat="option in incomingColumns"
+												ng-repeat="option in columns"
 											>
 												{{ option }}
 											</option>
@@ -356,23 +360,86 @@
 								step="5"
 								heading="Fix inconsistencies in data"
 								expanded="vm.currentStep == 5"
+								completed="completedSteps.includes(5)"
 							>
 								<div
-									class="mt-6 border-2 rounded-md overflow-hidden divide-y"
+									class="w-full overflow-x-auto flex items-center -mt-1.5 border-b border-neutral-300/70 gap-5"
+								>
+									<button
+										ng-repeat="column in columns"
+										class="-mb-px h-10 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
+										ng-class="{
+											'text-accents border-accent': vm.dataFixColumn == column,
+											'border-transparent text-neutral-400 hover:text-neutral-500/90': vm.dataFixColumn != column,
+										}"
+										ng-click="vm.dataFixColumn = column"
+									>
+										<!-- <span
+											ng-show="$index == 0"
+											class="ml-1.5 border border-current rounded-full w-4 h-4 pb-0.5 text-[10px] leading-none flex items-center justify-center"
+											>2</span
+										> -->
+										<svg
+											ng-show="$index == 0"
+											class="mr-1 w-4 h-4 text-amber-500"
+											viewBox="0 0 24 24"
+											fill="currentColor"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+												clip-rule="evenodd"
+											/>
+										</svg>
+
+										<!-- <svg
+											ng-show="$index != 0"
+											class="mr-1 w-4 h-4 text-green-600"
+											viewBox="0 0 24 24"
+											fill="currentColor"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+												clip-rule="evenodd"
+											/>
+										</svg> -->
+
+										{{column}}
+									</button>
+								</div>
+
+								<p
+									class="mb-2 text-center py-3.5 bg-neutral-100 text-neutral-400"
+									ng-show="vm.dataFixColumn != 'Position'"
+								>
+									There are no invalid {{vm.dataFixColumn}}
+									rows.
+								</p>
+								<p
+									class="py-3.5 text-neutral-500"
+									ng-show="vm.dataFixColumn == 'Position'"
+								>
+									We found two invalid positions in your data.
+								</p>
+
+								<div
+									ng-show="vm.dataFixColumn == 'Position'"
+									class="mt- border-2 rounded-md overflow-hidden divide-y"
 								>
 									<div
-										ng-repeat="column in columns"
+										ng-repeat="row in invalidRows"
 										ngFor="{{action}}"
 										class="overflow-hidden cursor-pointer relative flex items-center py-2 pl-3.5 pr-2 gap-3"
 									>
 										<span
-											class="font-medium text-neutral-600/80"
+											class="text-sm font-semibold text-neutral-600/80"
 										>
-											{{column}}
+											{{row}}
 										</span>
 
 										<div
-											class="flex-1 flex items-center text-neutral-400/60"
+											class="-mr-2 flex-1 flex items-center text-neutral-400/60"
 										>
 											<div
 												class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
@@ -394,13 +461,13 @@
 										</div>
 
 										<select
-											class="w-[140px] text-xs rounded-full bg-gray-100/80 border-neutral-200/80 shadow-none"
+											class="focus:ring-0 w-[140px] py-1.5 text-xs rounded-full bg-gray-100/80 border-neutral-200/80 shadow-none"
 											ng-model="vm.columnMap[column]"
 										>
 											<option value="">Choose one</option>
 											<option
 												ng-value="option"
-												ng-repeat="option in incomingColumns"
+												ng-repeat="option in columns"
 											>
 												{{ option }}
 											</option>
@@ -417,7 +484,7 @@
 									</button>
 								</div> -->
 
-								<div class="mt-6 -ml-4 flex items-center gap-2">
+								<div class="mt-7 -ml-4 flex items-center gap-2">
 									<button
 										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 4"
@@ -440,7 +507,7 @@
 							class="w-96 bg-primary-light/80 fixed inset-y-0 right-0"
 						></div> -->
 						<div
-							ng-show="!vm.data"
+							ng-show="vm.currentStep == 1"
 							class="relative h-full p-12 flex flex-col items-center justify-center bg-neutral-100"
 						>
 							<div
@@ -588,7 +655,7 @@
 							</div>
 						</div>
 						<div
-							ng-show="vm.data"
+							ng-show="vm.currentStep > 1"
 							class="relative h-full p-12 flex flex-col justify-center bg-gradient-to-br from-primary to-green-500"
 						>
 							<div
@@ -629,9 +696,12 @@
 										{{columns[$index]}}
 									</span>
 
-									<span ng-if="$index > columns.length - 1"
-										>&nbsp;</span
+									<span
+										class="text-neutral-400/70"
+										ng-if="$index > columns.length - 1"
 									>
+										--&nbsp;
+									</span>
 								</div>
 							</div>
 						</div>
