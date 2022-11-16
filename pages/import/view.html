@@ -3,7 +3,7 @@
 		<div class="fixed inset-0 z-50 spl-16 bg-black/60">
 			<div class="h-full bg-white shadow-2xl srounded-tl-[50px]">
 				<div class="relative z-10 h-full flex">
-					<div class="w-[500px] border-r border-neutral-300">
+					<div class="w-[500px]">
 						<div
 							class="h-16 flex items-center px-3 border-b border-neutral-200"
 						>
@@ -31,11 +31,100 @@
 								Import data to SetHero
 							</h2>
 						</div>
-						<div class="px-6 border-r border-r-neutral-300">
+						<div class="px-6">
 							<collapsible-step
 								step="1"
-								title="What type of data are you importing?"
+								title="Add your data"
 								expanded="vm.currentStep == 1"
+							>
+								<div>
+									<div
+										class="flex items-center mb-5 -mt-2.5 border-b border-neutral-300/70 gap-4"
+									>
+										<button
+											ng-repeat="choice in importFromKeys"
+											class="-mb-px py-3.5 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
+											ng-class="{
+												'text-accent border-accent': vm.importFrom == importFromChoices[choice],
+												'border-transparent text-neutral-400 hover:text-neutral-500/90': vm.importFrom != importFromChoices[choice],
+											}"
+											ng-click="vm.importFrom = importFromChoices[choice]"
+										>
+											{{choice}}
+										</button>
+									</div>
+
+									<div
+										ng-show="vm.importFrom == 'file'"
+										class="relative min-h-[160px] bg-neutral-100/80 border-2 border-neutral-400/60 border-dashed rounded flex flex-col items-center justify-center gap-4"
+									>
+										<span
+											class="text-neutral-500/70 text-sm text-center uppercase tracking-wide font-semibold leading-6"
+										>
+											Drag and drop <br />
+											a CSV or XLSX file here
+										</span>
+
+										<button
+											type="submit"
+											class="px-4 py-2 bg-white text-neutral-500/90 border border-neutral-300 uppercase text-xs tracking-wide font-medium rounded-md focus:outline-none relative overflow-hidden"
+										>
+											or choose file
+										</button>
+									</div>
+
+									<div ng-show="vm.importFrom == 'google'">
+										<form action="#">
+											<label
+												for=""
+												class="inline-block font-medium text-neutral-500 mb-0.5"
+											>
+												Google Sheet link
+											</label>
+
+											<div
+												class="relative flex items-center"
+											>
+												<input
+													type="text"
+													class="w-full"
+													placeholder="Paste link to google sheet here..."
+												/>
+												<button
+													type="submit"
+													class="absolute right-1.5 px-2.5 py-2 bg-white text-neutral-500/80 border border-neutral-300 text-xs font-medium leading-none rounded focus:outline-none"
+												>
+													Paste link
+												</button>
+											</div>
+										</form>
+									</div>
+
+									<div ng-show="vm.importFrom == 'excel'">
+										<form action="#">
+											<textarea
+												type="text"
+												class="w-full py-3 px-4"
+												rows="6"
+												placeholder="Copy data from excel and paste it in here"
+											></textarea>
+										</form>
+									</div>
+								</div>
+
+								<div class="mt-6">
+									<button
+										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 2"
+									>
+										Next
+									</button>
+								</div>
+							</collapsible-step>
+							<collapsible-step
+								step="2"
+								title="What type of data are you importing?"
+								expanded="vm.currentStep == 2"
 							>
 								<div class="grid grid-cols-4 gap-2">
 									<label
@@ -43,9 +132,9 @@
 										ngFor="{{type}}"
 										class="cursor-pointer relative flex flex-col items-center pt-7 pb-2.5 px-3 gap-2 border rounded overflow-hidden"
 										ng-class="{
-                                            'bg-primary-light text-primary border-primary': vm.importType == type, 
-                                            'border-neutral-300 text-neutral-400': vm.importType != type
-                                        }"
+										'bg-primary-light text-primary border-primary': vm.importType == type, 
+										'border-neutral-300 text-neutral-400': vm.importType != type
+									}"
 									>
 										<div
 											class="w-10 h-10 flex items-center justify-center"
@@ -132,39 +221,7 @@
 									</label>
 								</div>
 
-								<div class="mt-6">
-									<button
-										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
-										ng-click="vm.currentStep = 2"
-									>
-										Next
-									</button>
-								</div>
-							</collapsible-step>
-							<collapsible-step
-								step="2"
-								title="Select data source"
-								expanded="vm.currentStep == 2"
-							>
-								<div
-									class="relative min-h-[170px] bg-neutral-100/80 text-neutral-500/80 border-2 border-neutral-400 border-dashed rounded flex flex-col items-center justify-center gap-4"
-								>
-									<span
-										class="text-sms text-center uppercase tracking-wide font-medium leading-relaxed"
-									>
-										Drag and drop <br />
-										a CSV or XLSX file here.
-									</span>
-
-									<button
-										type="submit"
-										class="px-3 py-1.5 border-2 bg-primary text-white border-primary uppercase text-xs tracking-wide font-medium rounded focus:outline-none relative overflow-hidden"
-									>
-										or choose file
-									</button>
-								</div>
-
-								<div class="mt-6 -ml-4 flex items-center gap-">
+								<div class="mt-6 -ml-4 flex items-center gap-2">
 									<button
 										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 1"
@@ -172,7 +229,7 @@
 										Previous
 									</button>
 									<button
-										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 3"
 									>
 										Next
@@ -208,7 +265,7 @@
 									</label>
 								</div>
 
-								<div class="mt-6 -ml-4 flex items-center gap-">
+								<div class="mt-6 -ml-4 flex items-center gap-2">
 									<button
 										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 2"
@@ -216,7 +273,7 @@
 										Previous
 									</button>
 									<button
-										class="px-4 py-2 border border-primary text-primary hover:bg-primary/5 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 4"
 									>
 										Next
@@ -224,7 +281,6 @@
 								</div>
 							</collapsible-step>
 							<collapsible-step
-								is-last="true"
 								step="4"
 								title="Map your data to work with SetHero"
 								expanded="vm.currentStep == 4"
@@ -280,12 +336,99 @@
 									</div>
 								</div>
 
-								<div class="mt-6 flex items-center gap-">
+								<div class="mt-6 -ml-4 flex items-center gap-2">
+									<button
+										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 3"
+									>
+										Previous
+									</button>
+									<button
+										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 5"
+									>
+										Next
+									</button>
+								</div>
+							</collapsible-step>
+							<collapsible-step
+								is-last="true"
+								step="5"
+								title="Fix inconsistencies in data"
+								expanded="vm.currentStep == 5"
+							>
+								<div
+									class="mt-6 border-2 rounded-md overflow-hidden divide-y"
+								>
+									<div
+										ng-repeat="column in columns"
+										ngFor="{{action}}"
+										class="overflow-hidden cursor-pointer relative flex items-center py-2 pl-3.5 pr-2 gap-3"
+									>
+										<span
+											class="font-medium text-neutral-600/80"
+										>
+											{{column}}
+										</span>
+
+										<div
+											class="flex-1 flex items-center text-neutral-400/60"
+										>
+											<div
+												class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
+											></div>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke-width="1.5"
+												stroke="currentColor"
+												class="w-6 h-6"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													d="M8.25 4.5l7.5 7.5-7.5 7.5"
+												/>
+											</svg>
+										</div>
+
+										<select
+											class="w-[140px] text-xs rounded-full bg-gray-100/80 border-neutral-200/80 shadow-none"
+											ng-model="vm.columnMap[column]"
+										>
+											<option value="">Choose one</option>
+											<option
+												ng-value="option"
+												ng-repeat="option in incomingColumns"
+											>
+												{{ option }}
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<!-- <div class="mt-6 flex items-center gap-">
 									<button
 										class="w-full px-4 py-3 bg-primary hover:bg-primary/95 border border-primary text-white text-sm font-medium leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 4"
 									>
 										Complete
+									</button>
+								</div> -->
+
+								<div class="mt-6 -ml-4 flex items-center gap-2">
+									<button
+										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 4"
+									>
+										Previous
+									</button>
+									<button
+										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 5"
+									>
+										Next
 									</button>
 								</div>
 							</collapsible-step>
@@ -297,6 +440,155 @@
 							class="w-96 bg-primary-light/80 fixed inset-y-0 right-0"
 						></div> -->
 						<div
+							ng-show="!vm.data"
+							class="relative h-full p-12 flex flex-col items-center justify-center bg-neutral-100"
+						>
+							<div
+								class="flex-1 flex flex-col items-center justify-center text-center max-w-xl"
+							>
+								<div class="relative mb-8">
+									<div
+										class="z-10 bg-white absolute top-3 -left-1/2 ml-10 w-[140px] h-[32px] rounded-md overflow-hidden border border-neutral-300/80 shadow-sm"
+									>
+										<div
+											class="relative h-full w-full py-2 flex items-center gap-3 isolate"
+										>
+											<div
+												class="absolute inset-0 bg-green-500/5 z-[-1]"
+											></div>
+											<img
+												class="ml-2 -mr-1 h-full flex-shrink-0"
+												src="assets/img/sheet.svg"
+												alt=""
+											/>
+											<div
+												class="flex-1 grid grid-cols-3 divide-y divide-x divide-green-600 opacity-20"
+											>
+												<span
+													class="h-2"
+													ng-repeat="item in decoArray track by $index"
+												>
+													&nbsp;
+												</span>
+											</div>
+										</div>
+									</div>
+
+									<div
+										class="relative w-40 h-40 rounded-full flex items-center bg-white/70 border-2 border-neutral-300/60"
+									>
+										<img
+											class="relative h-24 mt-4 ml-9 opacity-20"
+											src="assets/img/curve.png"
+											alt=""
+										/>
+									</div>
+
+									<div
+										class="bg-white absolute bottom-3 -right-2/3 mr-10 w-[140px] h-[32px] rounded-md overflow-hidden border border-neutral-300/80 shadow-sm"
+									>
+										<div
+											class="relative h-full w-full py-2 flex flex-row-reverse items-center gap-3 isolate"
+										>
+											<div
+												class="absolute inset-0 bg-primary/5 z-[-1]"
+											></div>
+											<img
+												class="mr-2 -ml-1 h-2.5 flex-shrink-0"
+												src="assets/img/icon.png"
+												alt=""
+											/>
+											<div
+												class="flex-1 grid grid-cols-3 divide-y divide-x divide-x-reverse divide-primary opacity-20"
+											>
+												<span
+													class="h-2"
+													ng-repeat="item in decoArray track by $index"
+												>
+													&nbsp;
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<h3
+									class="text-2xl leading-none font-semibold opacity-50"
+								>
+									Add your data to get started
+								</h3>
+								<p class="mt-3 text-base leading-8 opacity-40">
+									Drag and drop CSV, XLS or XLSX file
+									containing your existing data.
+									Alternatively, you can enter a Google sheets
+									link or copy / paste from excel.
+								</p>
+							</div>
+							<div
+								class="w-full border-t border-neutral-300 px-16 pt-10 flex flex-col gap-6 items-center justify-center"
+							>
+								<h3 class="opacity-50">
+									Need some help getting started? Here's an an
+									instructional video.
+								</h3>
+								<div
+									class="flex items-center gap-3 rounded-lg bg-white shadow overflow-hidden w-[430px] p-2 border border-neutral-200/50"
+								>
+									<div
+										class="relative flex-shrink-0 w-[120px] aspect-[1/0.65] rounded-md bg-neutral-100"
+									>
+										<img
+											class="w-full h-full rounded-md object-cover"
+											src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxNjE2NXwwfDF8c2VhcmNofDF8fHVpfGVufDB8fHx8MTY2ODU3ODE3Ng&ixlib=rb-4.0.3&q=80&w=400"
+											alt=""
+										/>
+
+										<div
+											class="absolute inset-0 m-auto w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												fill="currentColor"
+												viewBox="0 0 24 24"
+												stroke-width="1.5"
+												class="w-5 h-5 ml-0.5"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"
+												/>
+											</svg>
+										</div>
+									</div>
+									<div class="flex-1 min-w-0 pr-1">
+										<div
+											class="mb-1 flex items-center gap-2"
+										>
+											<h5
+												class="leading-none text-lg font-semibold"
+											>
+												Importing data
+											</h5>
+
+											<span
+												class="mt-0.5 py-1 px-2 text-xs leading-none font-semibold border border-neutral-400 text-primary rounded-full flex items-center justify-center"
+											>
+												<span class="mb-px">5 min</span>
+											</span>
+										</div>
+										<p
+											class="leading-relaxed text-sm opacity-70"
+										>
+											Learn how to import your existing
+											data then make it work with SetHero.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div
+							ng-show="vm.data"
 							class="relative h-full p-12 flex flex-col justify-center bg-gradient-to-br from-primary to-green-500"
 						>
 							<div
