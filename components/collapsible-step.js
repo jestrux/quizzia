@@ -2,7 +2,7 @@ export default function CollapsibleStep() {
 	return {
 		restrict: "E",
 		transclude: true,
-		scope: { step: "@", title: "@", expanded: "=", isLast: "@" },
+		scope: { step: "@", heading: "@", expanded: "=", isLast: "@" },
 		link: (scope) => {
 			// scope.expanded = scope.expanded && scope.expanded != "false";
 			console.log("Collapsed: ", scope.expanded, typeof scope.expanded);
@@ -22,7 +22,7 @@ export default function CollapsibleStep() {
                 </div>
                 <div class="flex-1">
                     <h3 class="text-lg leading-none font-medium mt-1 opacity-60">
-                        {{title}}
+                        {{heading}}
                     </h3>
 
                     <div ng-show="expanded">
