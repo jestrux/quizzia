@@ -1,6 +1,12 @@
 export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.importTypes = ["Scenes", "Locations", "Cast", "Crew"];
-	$scope.columns = ["Position", "Person", "Email", "Phone", "Department"];
+	$scope.columns = [
+		{ label: "Position" },
+		{ label: "Person" },
+		{ label: "Email" },
+		{ label: "Phone" },
+		{ label: "Department" },
+	];
 	$scope.incomingColumns = [
 		"Job",
 		"Member",
@@ -27,12 +33,24 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.vm = {
 		data: null,
 		importFrom: "file",
-		currentStep: 1,
+		currentStep: 4,
 		importAction: "add",
 		importType: "Crew",
 		dataFixColumn: "Position",
 		columnMap: {},
 	};
+
+	$scope.$watch(
+		"vm.columnMap",
+		function (newValue) {
+			$scope.columns = $scope.columns.map((col) => {
+				col.mapped = Object.values(newValue || {}).includes(col.label);
+				return col;
+			});
+		},
+		true
+	);
+
 	$scope.$watch("vm.currentStep", function (newValue) {
 		if (!$scope.completedSteps.includes(newValue)) {
 			$scope.completedSteps.push(newValue - 1);
