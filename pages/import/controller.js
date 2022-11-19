@@ -1,12 +1,6 @@
 export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.importTypes = ["Scenes", "Locations", "Cast", "Crew"];
-	$scope.columns = [
-		{ label: "Position" },
-		{ label: "Person" },
-		{ label: "Email" },
-		{ label: "Phone" },
-		{ label: "Department" },
-	];
+	$scope.columns = ["Position", "Person", "Email", "Phone", "Department"];
 	$scope.incomingColumns = [
 		"Job",
 		"Member",
@@ -43,9 +37,11 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.$watch(
 		"vm.columnMap",
 		function (newValue) {
-			$scope.columns = $scope.columns.map((col) => {
-				col.mapped = Object.values(newValue || {}).includes(col.label);
-				return col;
+			$scope.metaColumns = $scope.columns.map((col) => {
+				return {
+					label: col,
+					mapped: Object.values(newValue || {}).includes(col),
+				};
 			});
 		},
 		true

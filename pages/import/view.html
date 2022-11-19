@@ -387,7 +387,7 @@
 														Do not import
 													</option>
 													<option
-														ng-repeat="option in columns"
+														ng-repeat="option in metaColumns"
 														ng-value="option.label"
 														ng-disabled="option.mapped && vm.columnMap[column] != option.label"
 													>
@@ -752,7 +752,7 @@
 									<span
 										class="text-xs uppercase tracking-wide font-semibold"
 									>
-										{{columns[$index].label}}
+										{{columns[$index]}}
 									</span>
 
 									<span
