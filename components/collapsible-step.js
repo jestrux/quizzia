@@ -17,7 +17,7 @@ export default function CollapsibleStep() {
             ></div>
             <div class="flex py-5">
                 <div
-                    class="flex-shrink-0 rounded-full w-6 h-6 text-sm flex items-center justify-center text-white mr-5 relative z-10"
+                    class="flex-shrink-0 rounded-full w-6 h-6 text-sm flex items-center justify-center text-white mr-3.5 relative z-10"
                     ng-class="{'bg-neutral-400': !expanded && !completed, 'bg-accent': expanded || completed}"
                 >
                     <span ng-show="!completed || expanded">{{step}}</span>

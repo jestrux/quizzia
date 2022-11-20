@@ -1,4 +1,7 @@
 export default function ImportController($scope, $routeParams, ImportService) {
+	$scope.positions = [];
+	$scope.departments = [];
+
 	$scope.importTypes = ["Scenes", "Locations", "Cast", "Crew"];
 	$scope.columns = ["Position", "Person", "Email", "Phone", "Department"];
 	$scope.incomingColumns = [
@@ -27,7 +30,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.vm = {
 		data: null,
 		importFrom: "file",
-		currentStep: 4,
+		currentStep: 5,
 		importAction: "add",
 		importType: "Crew",
 		dataFixColumn: "Position",
@@ -52,4 +55,12 @@ export default function ImportController($scope, $routeParams, ImportService) {
 			$scope.completedSteps.push(newValue - 1);
 		}
 	});
+
+	// Promise.all([ImportService.fetchPositions(), ImportService.fetchDepartments()]).then(function([positions, departments]){
+	// 	$scope.departments = departments;
+	// 	$scope.positions = positions;
+
+	// 	console.log("Data: ", positions, departments);
+	// 	$scope.$apply();
+	// })
 }

@@ -30,6 +30,9 @@ angular
 				.when("/import", {
 					template: "<import />",
 				})
+				.when("/positions", {
+					templateUrl: "pages/positions.html",
+				})
 				.otherwise({
 					redirectTo: "/play",
 				});
