@@ -3,7 +3,7 @@
 		<div class="fixed inset-0 z-50 bg-black/60">
 			<div class="h-full bg-white shadow-2xl srounded-tl-[50px]">
 				<div class="relative z-10 h-full flex">
-					<div class="w-[500px] overflow-y-auto">
+					<div class="w-[500px] overflow-x-hidden overflow-y-auto">
 						<div
 							class="h-16 flex items-center px-3 border-b border-neutral-200"
 						>
@@ -33,6 +33,7 @@
 						</div>
 						<div class="px-3.5">
 							<collapsible-step
+								on-click="setStep"
 								step="1"
 								heading="Add your data"
 								expanded="vm.currentStep == 1"
@@ -40,7 +41,7 @@
 							>
 								<div>
 									<div
-										class="flex items-center mb-5 -mt-2.5 border-b border-neutral-300/70 gap-4"
+										class="hidden flex items-center mb-5 -mt-2.5 border-b border-neutral-300/70 gap-4"
 									>
 										<button
 											ng-repeat="choice in importFromKeys"
@@ -55,24 +56,10 @@
 										</button>
 									</div>
 
-									<div
-										ng-show="vm.importFrom == 'file'"
-										class="relative min-h-[160px] bg-neutral-100/80 border-2 border-neutral-400/60 border-dashed rounded flex flex-col items-center justify-center gap-4"
-									>
-										<span
-											class="text-neutral-500/70 text-sm text-center uppercase tracking-wide font-semibold leading-6"
-										>
-											Drag and drop <br />
-											a CSV or XLSX file here
-										</span>
-
-										<button
-											type="submit"
-											class="px-4 py-2 bg-white text-neutral-500/90 border border-neutral-300 uppercase text-xs tracking-wide font-medium rounded-md focus:outline-none relative overflow-hidden"
-										>
-											or choose file
-										</button>
-									</div>
+									<!-- ng-show="vm.importFrom == 'file'" -->
+									<file-picker
+										on-change="processSheet"
+									></file-picker>
 
 									<div ng-show="vm.importFrom == 'google'">
 										<form action="#">
@@ -113,6 +100,126 @@
 									</div>
 								</div>
 
+								<div class="mt-3" ng-if="fileDetails">
+									<div
+										class="mb-1 bg-white h-12 rounded overflow-hidden border border-neutral-200/80 shadow-sm"
+									>
+										<div
+											class="relative h-full w-full flex items-center pl-1.5 pr-3"
+										>
+											<div
+												class="rounded-full h-8 w-8 p-2"
+											>
+												<img
+													class="h-full flex-shrink-0"
+													src="assets/img/sheet.svg"
+													alt=""
+												/>
+											</div>
+
+											<div
+												class="ml-1 mr-2 flex-1 text-sm leading-none min-w-0 truncate"
+											>
+												{{fileDetails.fileName}}
+											</div>
+
+											<button
+												class="rounded-full bg-gray-100 w-5 h-5 border flex items-center justify-center"
+												ng-click="clearSelectedFile()"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke-width="1.8"
+													stroke="currentColor"
+													class="w-3.5 h-3.5 text-black"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														d="M6 18L18 6M6 6l12 12"
+													/>
+												</svg>
+											</button>
+										</div>
+									</div>
+
+									<div class="flex flex-col">
+										<div
+											class="overflow-x-auto sm:-mx-6 lg:-mx-8"
+										>
+											<div
+												class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
+											>
+												<div
+													class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+												>
+													<table
+														class="min-w-full divide-y divide-gray-300"
+													>
+														<thead
+															class="bg-gray-50"
+														>
+															<tr>
+																<th
+																	scope="col"
+																	class="py-3.5 px-3 text-left text-xs font-semibold text-gray-900 whitespace-nowrap"
+																	ng-repeat="col in fileDetails.headerRow"
+																>
+																	{{col}}
+																</th>
+															</tr>
+														</thead>
+														<tbody
+															class="divide-y divide-gray-200 bg-white"
+														>
+															<tr>
+																<td
+																	class="whitespace-nowrap py-3 text-xs font-medium text-neutral-500 text-center"
+																	colspan="{{fileDetails.headerRow.length}}"
+																>
+																	<span>
+																		Content
+																		will go
+																		here
+																	</span>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div
+										class="mt-1 pl-10 pb-2 flex items-center gap-1.5 relative"
+									>
+										<div
+											class="z-[-1] absolute left-5 mt-px -top-6 bottom-5 w-3 border-l-2 border-b-2 border-neutral-300"
+										></div>
+
+										<h5
+											class="leading-none font-medium opacity-60 mr-2"
+										>
+											Is this your sheet's header row?
+										</h5>
+
+										<button
+											ng-repeat="value in ['No', 'Yes']"
+											class="px-3 py-1.5 border text-xs leading-none rounded-full focus:outline-none relative overflow-hidden"
+											ng-class="{
+												'border-neutral-400/80 hover:bg-neutral-100 text-neutral-600': vm.headerRow != value,
+												'border-accent bg-accent text-white hover:bg-accent/90': vm.headerRow == value,
+											}"
+											ng-click="setHeaderRow(value)"
+										>
+											{{value}}
+										</button>
+									</div>
+								</div>
+
 								<div class="mt-6">
 									<button
 										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
@@ -123,6 +230,7 @@
 								</div>
 							</collapsible-step>
 							<collapsible-step
+								on-click="setStep"
 								step="2"
 								heading="What type of data are you importing?"
 								expanded="vm.currentStep == 2"
@@ -239,55 +347,11 @@
 								</div>
 							</collapsible-step>
 							<collapsible-step
+								on-click="setStep"
 								step="3"
-								heading="What action do you want to perform?"
+								heading="Map your data to work with SetHero"
 								expanded="vm.currentStep == 3"
 								completed="completedSteps.includes(3)"
-							>
-								<div
-									class="border-2 rounded overflow-hidden divide-y"
-								>
-									<label
-										ng-repeat="action in importActionsChoices"
-										ngFor="{{action}}"
-										class="overflow-hidden cursor-pointer relative flex items-center py-2 px-3 gap-3"
-										ng-class="{
-                                            'bg-primary-light text-primary': vm.importAction == importActions[action],
-                                            'text-neutral-600/80': vm.importAction != importActions[action]
-                                        }"
-									>
-										<input
-											ngId="{{action}}"
-											type="radio"
-											name="importAction"
-											ng-value="importActions[action]"
-											ng-model="vm.importAction"
-										/>
-
-										<span class="text-s"> {{action}} </span>
-									</label>
-								</div>
-
-								<div class="mt-6 -ml-4 flex items-center gap-2">
-									<button
-										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
-										ng-click="vm.currentStep = 2"
-									>
-										Previous
-									</button>
-									<button
-										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
-										ng-click="vm.currentStep = 4"
-									>
-										Next
-									</button>
-								</div>
-							</collapsible-step>
-							<collapsible-step
-								step="4"
-								heading="Map your data to work with SetHero"
-								expanded="vm.currentStep == 4"
-								completed="completedSteps.includes(4)"
 							>
 								<div
 									class="mt-6 border-2 rounded-md overflow-hidden"
@@ -303,7 +367,7 @@
 
 									<div class="divide-y">
 										<div
-											ng-repeat="column in incomingColumns"
+											ng-repeat="column in fileDetails.headerRow"
 											ngFor="{{action}}"
 											class="overflow-hidden cursor-pointer relative flex items-center py-2 pl-3 pr-2 gap-3"
 										>
@@ -402,36 +466,36 @@
 								<div class="mt-6 -ml-4 flex items-center gap-2">
 									<button
 										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
-										ng-click="vm.currentStep = 3"
+										ng-click="vm.currentStep = 2"
 									>
 										Previous
 									</button>
 									<button
 										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
-										ng-click="vm.currentStep = 5"
+										ng-click="vm.currentStep = 4"
 									>
 										Next
 									</button>
 								</div>
 							</collapsible-step>
 							<collapsible-step
-								is-last="true"
-								step="5"
+								on-click="setStep"
+								step="4"
 								heading="Fix inconsistencies in data"
-								expanded="vm.currentStep == 5"
-								completed="completedSteps.includes(5)"
+								expanded="vm.currentStep == 4"
+								completed="completedSteps.includes(4)"
 							>
 								<div
 									class="w-full overflow-x-auto flex items-center -mt-1.5 border-b border-neutral-300/70 gap-5"
 								>
 									<button
-										ng-repeat="column in columns"
-										class="-mb-px h-10 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
+										ng-repeat="column in mappedColumns"
+										class="-mb-px whitespace-nowrap h-10 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
 										ng-class="{
-											'text-accents border-accent': vm.dataFixColumn == column,
-											'border-transparent text-neutral-400 hover:text-neutral-500/90': vm.dataFixColumn != column,
+											'text-accents border-accent': dataFixColumn == column,
+											'border-transparent text-neutral-400 hover:text-neutral-500/90': dataFixColumn != column,
 										}"
-										ng-click="vm.dataFixColumn = column"
+										ng-click="dataFixColumn = column"
 									>
 										<!-- <span
 											ng-show="$index == 0"
@@ -470,43 +534,47 @@
 
 								<p
 									class="mb-2 text-center py-3.5 bg-neutral-100 text-neutral-400"
-									ng-show="vm.dataFixColumn != 'Position'"
+									ng-show="dataFixColumn != mappedColumns[0]"
 								>
-									There are no invalid {{vm.dataFixColumn}}
-									rows.
-								</p>
-								<p
-									class="py-3.5 text-neutral-500"
-									ng-show="vm.dataFixColumn == 'Position'"
-								>
-									We found two invalid positions in your data.
+									There are no invalid {{dataFixColumn}} rows.
 								</p>
 
 								<div
-									class="border-2 rounded-md overflow-hidden"
+									ng-show="dataFixColumn == mappedColumns[0]"
 								>
-									<div
-										class="flex items-center justify-between mt-3 mb-1 pl-3 pr-2 text-sm font-semibold opacity-60"
-									>
-										<span>Invalid value</span>
-										<span class="min-w-[180px] pl-1">
-											New value
-										</span>
-									</div>
+									<p class="py-3.5 text-neutral-500">
+										We found
+										<span class="font-bold"
+											>{{invalidPositions.length}}</span
+										>
+										invalid {{dataFixColumn}} in your data.
+									</p>
 
-									<div class="border-t divide-y">
-										<div>
-											<div
-												class="overflow-hidden cursor-pointer relative flex items-center py-2 px-2.5 gap-3"
+									<div
+										class="border-2 rounded-md overflow-hidden"
+									>
+										<div
+											class="flex items-center justify-between mt-3 mb-3 pl-3 pr-2 text-sm font-semibold opacity-60"
+										>
+											<span>Invalid value</span>
+											<span class="min-w-[180px] pl-1">
+												New value
+											</span>
+										</div>
+
+										<div class="border-t divide-y">
+											<position-input
+												ng-repeat="position in invalidPositions"
+												on-change="positionChanged"
 											>
 												<span
-													class="text-sm font-semibold text-neutral-600/80 mb-1"
+													class="mr-2 text-sm font-semibold text-neutral-600/80 mb-1"
 												>
 													Power saintly
 												</span>
 
 												<div
-													class="-mr-2 flex-1 flex items-center text-neutral-400/60"
+													class="flex-1 flex items-center text-neutral-400/60"
 												>
 													<div
 														class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
@@ -526,96 +594,7 @@
 														/>
 													</svg>
 												</div>
-
-												<div class="w-[180px]">
-													<button
-														class="flex items-center justify-between focus:ring-0 w-full pt-1.5 pb-2 px-2.5 text-xs text-neutral-400 rounded bg-neutral-100 border border-neutral-200/80 shadow-none"
-													>
-														<span
-															class="font-medium"
-														>
-															Choose position
-														</span>
-
-														<svg
-															class="w-3 h-3 mt-0.5 opacity-70 rotate-180"
-															fill="none"
-															viewBox="0 0 24 24"
-															stroke-width="3"
-															stroke="currentColor"
-														>
-															<path
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-															/>
-														</svg>
-													</button>
-												</div>
-											</div>
-
-											<div
-												class="-mt-[10px] relative mx-2.5 rounded-l rounded-bs -mb-0.5 mb-2s overflow-hidden"
-											>
-												<position-input />
-											</div>
-										</div>
-
-										<div
-											ng-repeat="position in ['Carpenter\'s Assistant', 'Janitorial Crew'] track by $index"
-											class="bg-white overflow-hidden cursor-pointer relative flex items-center py-2 px-2.5 gap-3"
-										>
-											<span
-												class="text-sm font-semibold text-neutral-600/80 mb-1"
-											>
-												{{ position }}
-											</span>
-
-											<div
-												class="-mr-2 flex-1 flex items-center text-neutral-400/60"
-											>
-												<div
-													class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
-												></div>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													fill="none"
-													viewBox="0 0 24 24"
-													stroke-width="1.5"
-													stroke="currentColor"
-													class="w-6 h-6"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														d="M8.25 4.5l7.5 7.5-7.5 7.5"
-													/>
-												</svg>
-											</div>
-
-											<div class="w-[180px]">
-												<button
-													class="flex items-center justify-between focus:ring-0 w-full pt-1.5 pb-2 px-2.5 text-xs text-neutral-400 rounded bg-neutral-100 border border-neutral-200/80 shadow-none"
-												>
-													<span class="font-medium">
-														Choose position
-													</span>
-
-													<svg
-														class="w-3 h-3 mt-0.5 opacity-70 rotate-0"
-														fill="none"
-														viewBox="0 0 24 24"
-														stroke-width="3"
-														stroke="currentColor"
-													>
-														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-														/>
-													</svg>
-												</button>
-											</div>
+											</position-input>
 										</div>
 									</div>
 								</div>
@@ -630,6 +609,53 @@
 								</div> -->
 
 								<div class="mt-7 -ml-4 flex items-center gap-2">
+									<button
+										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 3"
+									>
+										Previous
+									</button>
+									<button
+										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
+										ng-click="vm.currentStep = 6"
+									>
+										Next
+									</button>
+								</div>
+							</collapsible-step>
+							<collapsible-step
+								on-click="setStep"
+								step="5"
+								is-last="true"
+								heading="What action do you want to perform?"
+								expanded="vm.currentStep == 5"
+								completed="completedSteps.includes(5)"
+							>
+								<div
+									class="border-2 rounded overflow-hidden divide-y"
+								>
+									<label
+										ng-repeat="action in importActionsChoices"
+										ngFor="{{action}}"
+										class="overflow-hidden cursor-pointer relative flex items-center py-2 px-3 gap-3"
+										ng-class="{
+                                            'bg-primary-light text-primary': vm.importAction == importActions[action],
+                                            'text-neutral-600/80': vm.importAction != importActions[action]
+                                        }"
+									>
+										<input
+											ngId="{{action}}"
+											type="radio"
+											name="importAction"
+											ng-value="importActions[action]"
+											ng-model="vm.importAction"
+										/>
+
+										<span class="text-s"> {{action}} </span>
+									</label>
+								</div>
+
+								<div class="mt-6 -ml-4 flex items-center gap-2">
 									<button
 										class="px-4 py-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-neutral-600 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
 										ng-click="vm.currentStep = 4"
@@ -829,24 +855,60 @@
 							</div>
 
 							<div
-								class="mb-10 h-4/6 max-h-[600px] bg-white border-2 border-primary shadow-xl rounded-2xl overflow-hidden relative z-10 divide-y divide-x divide-neutral-200 grid grid-cols-5"
+								class="mb-10 h-4/6 max-h-[600px] bg-white border-2 border-primary shadow-xl rounded-2xl overflow-hidden relative z-10"
 							>
-								<div
-									class="py-2.5 px-5"
-									ng-repeat="item in decoArray track by $index"
-								>
-									<span
-										class="text-xs uppercase tracking-wide font-semibold"
+								<div class="flex flex-wrap">
+									<div
+										class="py-2.5 px-5 border-l border-b-2 border-neutral-200"
+										ng-repeat="column in mappedColumns"
+										style="min-width: 10%"
+										ng-style="{'width': (100 / mappedColumns.length) + '%' }"
 									>
-										{{columns[$index]}}
-									</span>
+										<span
+											class="text-neutral-900 text-xs uppercase tracking-wide font-bold"
+										>
+											{{column}}
+										</span>
+									</div>
+								</div>
 
-									<span
-										class="text-neutral-400/70"
-										ng-if="$index > columns.length - 1"
+								<div
+									ng-repeat="row in data"
+									class="flex flex-wrap"
+								>
+									<div
+										ng-repeat="column in mappedColumns"
+										class="min-w-0 truncate py-2.5 px-5 border-l border-b border-neutral-200 text-neutral-600"
+										style="min-width: 10%"
+										ng-style="{'width': (100 / mappedColumns.length) + '%' }"
 									>
-										--&nbsp;
-									</span>
+										<span
+											ng-if="row[reverseColumnMap[column]]"
+											class="text-xs"
+										>
+											{{row[reverseColumnMap[column]]}}
+										</span>
+
+										<span
+											class="text-neutral-400/70"
+											ng-if="!row[reverseColumnMap[column]]"
+										>
+											--&nbsp;
+										</span>
+									</div>
+								</div>
+
+								<div class="divide-neutral-200 flex flex-wrap">
+									<div
+										class="py-2.5 px-5 border-l border-b border-neutral-200"
+										ng-repeat="item in decoArray track by $index"
+										style="min-width: 10%"
+										ng-style="{'width': (100 / columns.length) + '%' }"
+									>
+										<span class="text-neutral-400/70">
+											&nbsp;
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
