@@ -8,7 +8,7 @@ export default function CollapsibleStep() {
 			expanded: "=",
 			completed: "=",
 			onClick: "=",
-			isLast: "@",
+			isLast: "=",
 		},
 		replace: true,
 		template: /*html*/ `

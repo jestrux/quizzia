@@ -1,3 +1,5 @@
+import importSteps from "./steps.js";
+
 class SheetProcessor {
 	workbook = null;
 	worksheet = null;
@@ -18,6 +20,38 @@ class SheetProcessor {
 }
 
 export default function ImportController($scope, $routeParams, ImportService) {
+	$scope.currentStep = 1;
+	$scope.allSteps = [...importSteps];
+	$scope.activeSteps = [...$scope.allSteps]; //.filter((_, i) => i != 1);
+	$scope.currentStepId = () => $scope.activeSteps[$scope.currentStep - 1].id;
+	$scope.completedSteps = [];
+	$scope.$watch("currentStep", function (newValue) {
+		if (!$scope.completedSteps.includes(newValue)) {
+			$scope.completedSteps.push(newValue - 1);
+		}
+	});
+
+	$scope.setStep = (step) => {
+		$scope.currentStep = step;
+	};
+
+	$scope.goNext = async () => {
+		if (!(await $scope.validateCurrentStep())) return;
+
+		$scope.setStep($scope.currentStep + 1);
+		$scope.$apply();
+	};
+
+	$scope.validateCurrentStep = () => {
+		return new Promise((resolve) => {
+			const step = $scope.activeSteps[$scope.currentStep - 1];
+			step.validator.validate($scope, (errors) => {
+				$scope.activeSteps[$scope.currentStep - 1].errors = errors;
+				resolve(!errors.length);
+			});
+		});
+	};
+
 	$scope.fileDetails = null;
 	// $scope.fileDetails = {
 	// 	headerRow: ["Position", "Person", "Email", "Phone", "Department"],
@@ -25,10 +59,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 
 	$scope.setHeaderRow = (value) => {
 		$scope.vm.headerRow = value;
-	};
-
-	$scope.setStep = (step) => {
-		$scope.vm.currentStep = step;
 	};
 
 	$scope.processSheet = (d, file) => {
@@ -45,10 +75,10 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.clearSelectedFile = () => {
 		$scope.fileDetails = null;
 		$scope.vm.headerRow = null;
+		$scope.completedSteps = [];
 	};
 
 	$scope.vm = {
-		currentStep: 1,
 		data: null,
 		importFrom: "file",
 		headerRow: null,
@@ -57,7 +87,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		dataFixColumn: "Position",
 		columnMap: {},
 	};
-	$scope.completedSteps = [];
 	$scope.decoArray = Array(300).fill(Math.random());
 	$scope.importTypes = ["Scenes", "Locations", "Cast", "Crew"];
 	$scope.columnsByType = {
@@ -116,6 +145,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		"Janitorial Crew",
 	];
 
+	$scope.mappedColumns = [];
 	const updateMetaColumns = function () {
 		$scope.metaColumns = $scope.columns.map((col) => {
 			return {
@@ -143,12 +173,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		true
 	);
 	$scope.$watch("columns", updateMetaColumns, true);
-
-	$scope.$watch("vm.currentStep", function (newValue) {
-		if (!$scope.completedSteps.includes(newValue)) {
-			$scope.completedSteps.push(newValue - 1);
-		}
-	});
 
 	$scope.$watch("vm.importType", function (newValue) {
 		if (!newValue?.length) return;

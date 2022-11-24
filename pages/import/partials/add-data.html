@@ -1,0 +1,154 @@
+<div>
+	<div
+		class="hidden flex items-center mb-5 -mt-2.5 border-b border-neutral-300/70 gap-4"
+	>
+		<button
+			ng-repeat="choice in importFromKeys"
+			class="-mb-px py-3.5 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
+			ng-class="{
+												'border-accent': vm.importFrom == importFromChoices[choice],
+												'border-transparent text-neutral-400 hover:text-neutral-500/90': vm.importFrom != importFromChoices[choice],
+											}"
+			ng-click="vm.importFrom = importFromChoices[choice]"
+		>
+			{{choice}}
+		</button>
+	</div>
+
+	<!-- ng-show="vm.importFrom == 'file'" -->
+	<file-picker on-change="processSheet"></file-picker>
+
+	<div ng-show="vm.importFrom == 'google'">
+		<form action="#">
+			<label
+				for=""
+				class="inline-block font-medium text-neutral-500 mb-0.5"
+			>
+				Google Sheet link
+			</label>
+
+			<div class="relative flex items-center">
+				<input
+					type="text"
+					class="w-full"
+					placeholder="Paste link to google sheet here..."
+				/>
+				<button
+					type="submit"
+					class="absolute right-1.5 px-2.5 py-2 bg-white text-neutral-500/80 border border-neutral-300 text-xs font-medium leading-none rounded focus:outline-none"
+				>
+					Paste link
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<div ng-show="vm.importFrom == 'excel'">
+		<form action="#">
+			<textarea
+				type="text"
+				class="w-full py-3 px-4"
+				rows="6"
+				placeholder="Copy data from excel and paste it in here"
+			></textarea>
+		</form>
+	</div>
+</div>
+
+<div class="mt-3" ng-if="fileDetails">
+	<div
+		class="mb-1 bg-white h-12 rounded overflow-hidden border border-neutral-200/80 shadow-sm"
+	>
+		<div class="relative h-full w-full flex items-center pl-1.5 pr-3">
+			<div class="rounded-full h-8 w-8 p-2">
+				<img
+					class="h-full flex-shrink-0"
+					src="assets/img/sheet.svg"
+					alt=""
+				/>
+			</div>
+
+			<div class="ml-1 mr-2 flex-1 text-sm leading-none min-w-0 truncate">
+				{{fileDetails.fileName}}
+			</div>
+
+			<button
+				class="rounded-full bg-gray-100 w-5 h-5 border flex items-center justify-center"
+				ng-click="clearSelectedFile()"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.8"
+					stroke="currentColor"
+					class="w-3.5 h-3.5 text-black"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M6 18L18 6M6 6l12 12"
+					/>
+				</svg>
+			</button>
+		</div>
+	</div>
+
+	<div class="flex flex-col">
+		<div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+			<div
+				class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
+			>
+				<div
+					class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+				>
+					<table class="min-w-full divide-y divide-gray-300">
+						<thead class="bg-gray-50">
+							<tr>
+								<th
+									scope="col"
+									class="py-3.5 px-3 text-left text-xs font-semibold text-gray-900 whitespace-nowrap"
+									ng-repeat="col in fileDetails.headerRow"
+								>
+									{{col}}
+								</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-gray-200 bg-white">
+							<tr>
+								<td
+									class="whitespace-nowrap py-3 text-xs font-medium text-neutral-500 text-center"
+									colspan="{{fileDetails.headerRow.length}}"
+								>
+									<span> Content will go here </span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="mt-1 pl-10 pb-2 flex items-center gap-1.5 relative">
+		<div
+			class="z-[-1] absolute left-5 mt-px -top-6 bottom-5 w-3 border-l-2 border-b-2 border-neutral-300"
+		></div>
+
+		<h5 class="leading-none font-medium opacity-60 mr-2">
+			Is this your sheet's header row?
+		</h5>
+
+		<button
+			ng-repeat="value in ['No', 'Yes']"
+			class="px-3 py-1.5 border text-xs leading-none rounded-full focus:outline-none relative overflow-hidden"
+			ng-class="{
+												'border-neutral-400/80 hover:bg-neutral-100 text-neutral-600': vm.headerRow != value,
+												'border-accent bg-accent text-white hover:bg-accent/90': vm.headerRow == value,
+											}"
+			ng-click="setHeaderRow(value)"
+		>
+			{{value}}
+		</button>
+	</div>
+</div>

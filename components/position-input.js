@@ -71,7 +71,7 @@ export default function PositionInput() {
 					<div class="flex flex-row-reverse px-1 py-1">
 						<button
 							class="h-8 flex items-center justify-center gap-1.5 pl-1.5 pr-2 border border-transparent hover:border-neutral-100 hover:bg-neutral-100 text-accent text-sm leading-none rounded focus:outline-none"
-							ng-click="vm.currentStep = 3"
+							ng-click="currentStep = 3"
 						>
 							<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.4" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

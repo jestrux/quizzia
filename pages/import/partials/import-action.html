@@ -1,0 +1,21 @@
+<div class="border-2 rounded overflow-hidden divide-y">
+	<label
+		ng-repeat="action in importActionsChoices"
+		ngFor="{{action}}"
+		class="overflow-hidden cursor-pointer relative flex items-center py-2 px-3 gap-3"
+		ng-class="{
+                                            'bg-primary-light text-primary': vm.importAction == importActions[action],
+                                            'text-neutral-600/80': vm.importAction != importActions[action]
+                                        }"
+	>
+		<input
+			ngId="{{action}}"
+			type="radio"
+			name="importAction"
+			ng-value="importActions[action]"
+			ng-model="vm.importAction"
+		/>
+
+		<span class="text-s"> {{action}} </span>
+	</label>
+</div>
