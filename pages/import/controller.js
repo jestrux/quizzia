@@ -166,7 +166,10 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	};
 
 	$scope.$watch("vm.firstRowAsHeader", function (newValue) {
-		if (!newValue) return;
+		if (!newValue) {
+			$scope.vm.columnMap = {};
+			return;
+		}
 
 		$scope.vm.columnMap = $scope.fileDetails.headerRow.reduce(
 			(agg, entry) => {
