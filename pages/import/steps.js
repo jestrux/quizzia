@@ -46,7 +46,6 @@ const importSteps = [
 			validate(scope, cb = () => {}) {
 				if (!this.watching) {
 					scope.$watch("mappedColumns", () => {
-						console.log("Mapped columns: ", scope.mappedColumns);
 						this.validate(scope, cb);
 					});
 

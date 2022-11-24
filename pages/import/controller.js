@@ -57,10 +57,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	// 	headerRow: ["Position", "Person", "Email", "Phone", "Department"],
 	// };
 
-	$scope.setHeaderRow = (value) => {
-		$scope.vm.headerRow = value;
-	};
-
 	$scope.processSheet = (d, file) => {
 		let { asArray, asJSON } = new SheetProcessor(d);
 		$scope.fileDetails = {
@@ -81,7 +77,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.vm = {
 		data: null,
 		importFrom: "file",
-		headerRow: null,
+		firstRowAsHeader: null,
 		importAction: "add",
 		importType: "",
 		dataFixColumn: "Position",
@@ -159,6 +155,31 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		$scope.dataFixColumn = $scope.mappedColumns[0];
 	};
 
+	$scope.$watch("columns", updateMetaColumns, true);
+	$scope.$watch("vm.importType", function (newValue) {
+		if (!newValue?.length) return;
+		$scope.columns = $scope.columnsByType[newValue];
+	});
+
+	$scope.setFirstRowAsHeader = (value) => {
+		$scope.vm.firstRowAsHeader = value;
+	};
+
+	$scope.$watch("vm.firstRowAsHeader", function (newValue) {
+		if (!newValue) return;
+
+		$scope.vm.columnMap = $scope.fileDetails.headerRow.reduce(
+			(agg, entry) => {
+				if ($scope.columns.includes(entry)) {
+					agg[entry] = entry;
+				}
+
+				return agg;
+			},
+			{}
+		);
+	});
+
 	$scope.$watch(
 		"vm.columnMap",
 		function () {
@@ -172,22 +193,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		},
 		true
 	);
-	$scope.$watch("columns", updateMetaColumns, true);
-
-	$scope.$watch("vm.importType", function (newValue) {
-		if (!newValue?.length) return;
-		$scope.columns = $scope.columnsByType[newValue];
-		$scope.vm.columnMap = $scope.fileDetails.headerRow.reduce(
-			(agg, entry) => {
-				if ($scope.columns.includes(entry)) {
-					agg[entry] = entry;
-				}
-
-				return agg;
-			},
-			{}
-		);
-	});
 
 	$scope.positionChanged = function (newValue) {
 		console.log("New position: ", newValue);
