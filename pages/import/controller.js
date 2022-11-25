@@ -74,6 +74,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		$scope.fileDetails = {
 			fileName: file.name,
 			headerRow: asArray[0],
+			data: asJSON,
 			sheetWithHeader: (header) => withHeader(header),
 		};
 		$scope.data = asJSON;
@@ -203,18 +204,19 @@ export default function ImportController($scope, $routeParams, ImportService) {
 			return;
 		}
 
-		$scope.vm.headerRow = $scope.fileDetails.headerRow.map((row, index) => {
+		const headerRow = $scope.fileDetails.headerRow.map((row, index) => {
 			return value == "Yes" ? row : `Column ${index + 1}`;
 		});
+
+		$scope.data =
+			value == "Yes"
+				? $scope.fileDetails.data
+				: $scope.fileDetails.sheetWithHeader(headerRow);
+
+		$scope.vm.headerRow = headerRow;
 	};
 
-	$scope.$watch("vm.headerRow", function (newValue) {
-		if (newValue) {
-			$scope.data = $scope.fileDetails.sheetWithHeader(
-				$scope.vm.headerRow
-			);
-		}
-
+	$scope.$watch("vm.headerRow", function () {
 		_autoMapColumns();
 	});
 
@@ -231,6 +233,16 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		},
 		true
 	);
+
+	const _validateData = () => {
+		if (!$scope.data?.length) return;
+
+		console.log("New data: ", $scope.data);
+	};
+
+	$scope.$watch("data", function () {
+		_validateData();
+	});
 
 	$scope.positionChanged = function (newValue) {
 		console.log("New position: ", newValue);

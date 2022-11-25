@@ -42,7 +42,8 @@
 	<p class="py-3.5 text-neutral-500">
 		We found
 		<span class="font-bold">{{invalidPositions.length}}</span>
-		invalid {{dataFixColumn}} in your data.
+		invalid {{dataFixColumn}} {{ invalidPositions.length == 1 ? 'row' :
+		'rows' }} in your data.
 	</p>
 
 	<div class="border-2 rounded-md overflow-hidden">
