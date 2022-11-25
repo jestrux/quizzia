@@ -7,9 +7,14 @@ const importSteps = [
 			watching: false,
 			validate(scope, cb = () => {}) {
 				if (!this.watching) {
-					scope.$watch("fileDetails", () => {
+					const clearWatcher = scope.$watch("fileDetails", () => {
 						this.validate(scope, cb);
 					});
+
+					this.clearErrorWatcher = () => {
+						clearWatcher();
+						this.watching = false;
+					};
 
 					this.watching = true;
 				}
@@ -26,9 +31,14 @@ const importSteps = [
 			watching: false,
 			validate(scope, cb = () => {}) {
 				if (!this.watching) {
-					scope.$watch("vm.importType", (newValue) => {
+					const clearWatcher = scope.$watch("vm.importType", () => {
 						this.validate(scope, cb);
 					});
+
+					this.clearErrorWatcher = () => {
+						clearWatcher();
+						this.watching = false;
+					};
 
 					this.watching = true;
 				}
@@ -45,15 +55,30 @@ const importSteps = [
 			watching: false,
 			validate(scope, cb = () => {}) {
 				if (!this.watching) {
-					scope.$watch("mappedColumns", () => {
-						this.validate(scope, cb);
-					});
+					const watcher = () => this.validate(scope, cb);
+
+					const clearMappedColumnsWatcher = scope.$watch(
+						"mappedColumns",
+						watcher
+					);
+					const clearHeaderRowWatcher = scope.$watch(
+						"vm.headerRow",
+						watcher
+					);
+
+					this.clearErrorWatcher = () => {
+						clearMappedColumnsWatcher();
+						clearHeaderRowWatcher();
+						this.watching = false;
+					};
 
 					this.watching = true;
 				}
 
 				cb(
-					scope.mappedColumns?.length < 2
+					!scope.vm.headerRow
+						? ["Select yes or no"]
+						: scope.mappedColumns.filter((col) => col)?.length < 2
 						? ["Map at least two columns"]
 						: []
 				);
@@ -64,11 +89,49 @@ const importSteps = [
 		id: "fix-data",
 		title: "Fix inconsistencies in data",
 		file: "fix-inconsistencies.html",
+		validator: {
+			watching: false,
+			validate(scope, cb = () => {}) {
+				// if (!this.watching) {
+				// 	const clearWatcher = scope.$watch("vm.importType", () => {
+				// 		this.validate(scope, cb);
+				// 	});
+
+				// 	this.clearErrorWatcher = () => {
+				// 		clearWatcher();
+				// 		this.watching = false;
+				// 	};
+
+				// 	this.watching = true;
+				// }
+
+				cb([]);
+			},
+		},
 	},
 	{
 		id: "import-action",
 		title: "What action do you want to perform?",
 		file: "import-action.html",
+		validator: {
+			watching: false,
+			validate(scope, cb = () => {}) {
+				// if (!this.watching) {
+				// 	const clearWatcher = scope.$watch("vm.importType", () => {
+				// 		this.validate(scope, cb);
+				// 	});
+
+				// 	this.clearErrorWatcher = () => {
+				// 		clearWatcher();
+				// 		this.watching = false;
+				// 	};
+
+				// 	this.watching = true;
+				// }
+
+				cb([]);
+			},
+		},
 	},
 ];
 

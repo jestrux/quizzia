@@ -1,5 +1,6 @@
 import importSteps from "./steps.js";
 
+// https://docs.sheetjs.com/docs/api/utilities#array-of-objects-input
 class SheetProcessor {
 	workbook = null;
 	worksheet = null;
@@ -14,9 +15,10 @@ class SheetProcessor {
 	get asJSON() {
 		return XLSX.utils.sheet_to_json(this.worksheet);
 	}
-	withHeader(header) {
+	withHeader = (header) => {
+		if (!this.worksheet) return;
 		return XLSX.utils.sheet_to_json(this.worksheet, { header });
-	}
+	};
 }
 
 export default function ImportController($scope, $routeParams, ImportService) {
@@ -26,29 +28,39 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	$scope.currentStepId = () => $scope.activeSteps[$scope.currentStep - 1].id;
 	$scope.completedSteps = [];
 	$scope.$watch("currentStep", function (newValue) {
+		_clearStepErrors();
 		if (!$scope.completedSteps.includes(newValue)) {
 			$scope.completedSteps.push(newValue - 1);
 		}
 	});
 
 	$scope.setStep = (step) => {
-		$scope.currentStep = step;
+		$scope.currentStep = Number(step);
 	};
 
-	$scope.goNext = async () => {
-		if (!(await $scope.validateCurrentStep())) return;
+	$scope.goNext = async (step) => {
+		if (!(await _validateStep(step - 1))) return;
 
-		$scope.setStep($scope.currentStep + 1);
+		$scope.setStep(step + 1);
 		$scope.$apply();
 	};
 
-	$scope.validateCurrentStep = () => {
+	const _validateStep = (stepIndex) => {
 		return new Promise((resolve) => {
-			const step = $scope.activeSteps[$scope.currentStep - 1];
+			const step = $scope.activeSteps[stepIndex];
 			step.validator.validate($scope, (errors) => {
-				$scope.activeSteps[$scope.currentStep - 1].errors = errors;
+				$scope.activeSteps[stepIndex].errors = errors;
 				resolve(!errors.length);
 			});
+		});
+	};
+
+	const _clearStepErrors = () => {
+		$scope.activeSteps.forEach((step) => {
+			step.errors = [];
+
+			if (step.validator.clearErrorWatcher)
+				step.validator.clearErrorWatcher();
 		});
 	};
 
@@ -58,14 +70,15 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	// };
 
 	$scope.processSheet = (d, file) => {
-		let { asArray, asJSON } = new SheetProcessor(d);
+		let { asArray, asJSON, withHeader } = new SheetProcessor(d);
 		$scope.fileDetails = {
 			fileName: file.name,
 			headerRow: asArray[0],
+			sheetWithHeader: (header) => withHeader(header),
 		};
 		$scope.data = asJSON;
 		$scope.$apply();
-		console.log("Workbook: ", asArray[0]);
+		// console.log("Workbook: ", asArray[0]);
 	};
 
 	$scope.clearSelectedFile = () => {
@@ -76,8 +89,8 @@ export default function ImportController($scope, $routeParams, ImportService) {
 
 	$scope.vm = {
 		data: null,
+		headerRow: null,
 		importFrom: "file",
-		firstRowAsHeader: null,
 		importAction: "add",
 		importType: "",
 		dataFixColumn: "Position",
@@ -141,6 +154,21 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		"Janitorial Crew",
 	];
 
+	const _autoMapColumns = function () {
+		if (!$scope.vm.headerRow) {
+			$scope.vm.columnMap = {};
+			return;
+		}
+
+		$scope.vm.columnMap = $scope.vm.headerRow.reduce((agg, entry) => {
+			if ($scope.columns.includes(entry)) {
+				agg[entry] = entry;
+			}
+
+			return agg;
+		}, {});
+	};
+
 	$scope.mappedColumns = [];
 	const updateMetaColumns = function () {
 		$scope.metaColumns = $scope.columns.map((col) => {
@@ -149,38 +177,45 @@ export default function ImportController($scope, $routeParams, ImportService) {
 				mapped: Object.values($scope.vm.columnMap || {}).includes(col),
 			};
 		});
-		$scope.mappedColumns = $scope.metaColumns
+		const mappedColumns = $scope.metaColumns
 			.filter(({ mapped }) => mapped)
 			.map(({ label }) => label);
+
+		$scope.mappedColumns = [
+			...mappedColumns,
+			...(mappedColumns.length == 1 ? [""] : []), // minimum of two columns
+		];
 		$scope.dataFixColumn = $scope.mappedColumns[0];
 	};
 
 	$scope.$watch("columns", updateMetaColumns, true);
 	$scope.$watch("vm.importType", function (newValue) {
 		if (!newValue?.length) return;
+
+		$scope.completedSteps = [1];
 		$scope.columns = $scope.columnsByType[newValue];
+		$scope.vm.headerRow = null;
 	});
 
 	$scope.setFirstRowAsHeader = (value) => {
-		$scope.vm.firstRowAsHeader = value;
-	};
-
-	$scope.$watch("vm.firstRowAsHeader", function (newValue) {
-		if (!newValue) {
-			$scope.vm.columnMap = {};
+		if (value == null) {
+			$scope.vm.headerRow = null;
 			return;
 		}
 
-		$scope.vm.columnMap = $scope.fileDetails.headerRow.reduce(
-			(agg, entry) => {
-				if ($scope.columns.includes(entry)) {
-					agg[entry] = entry;
-				}
+		$scope.vm.headerRow = $scope.fileDetails.headerRow.map((row, index) => {
+			return value == "Yes" ? row : `Column ${index + 1}`;
+		});
+	};
 
-				return agg;
-			},
-			{}
-		);
+	$scope.$watch("vm.headerRow", function (newValue) {
+		if (newValue) {
+			$scope.data = $scope.fileDetails.sheetWithHeader(
+				$scope.vm.headerRow
+			);
+		}
+
+		_autoMapColumns();
 	});
 
 	$scope.$watch(
@@ -190,7 +225,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 			$scope.reverseColumnMap = Object.entries(
 				$scope.vm.columnMap
 			).reduce((agg, [key, value]) => {
-				agg[value] = key;
+				if (value) agg[value] = key;
 				return agg;
 			}, {});
 		},

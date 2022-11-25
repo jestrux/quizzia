@@ -1,4 +1,4 @@
-<div ng-show="!vm.firstRowAsHeader">
+<div ng-if="!vm.headerRow">
 	<div class="flex flex-col">
 		<div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
 			<div
@@ -37,20 +37,20 @@
 
 	<div class="mt-1 pl-10 pb-2 flex items-center gap-1.5 relative">
 		<div
-			class="z-[-1] absolute left-5 mt-px -top-6 bottom-5 w-3 border-l-2 border-b-2 border-neutral-300"
-		></div>
+			class="absolute left-5 mt-1 -top-14 bottom-5 w-3 border-l-2 border-b-2 border-neutral-300"
+		>
+			<div class="-ml-2 pl-1 pr-0.5s w-4 overflow-hidden">
+				<div class="-ml-px bg-accent w-2 h-2 rounded-full -mt-1"></div>
+			</div>
+		</div>
 
-		<h5 class="leading-none font-medium opacity-60 mr-2">
+		<h5 class="leading-none font-medium opacity-60 mr-1">
 			Is this your sheet's header row?
 		</h5>
 
 		<button
 			ng-repeat="value in ['No', 'Yes']"
-			class="px-3 py-1.5 border text-xs leading-none rounded-full focus:outline-none relative overflow-hidden"
-			ng-class="{
-				'border-neutral-400/80 hover:bg-neutral-100 text-neutral-600': vm.firstRowAsHeader != value,
-				'border-accent bg-accent text-white hover:bg-accent/90': vm.firstRowAsHeader == value,
-			}"
+			class="px-3 py-1.5 border text-xs leading-none rounded-full focus:outline-none relative overflow-hidden border-neutral-400/80 hover:bg-neutral-100 text-neutral-600"
 			ng-click="setFirstRowAsHeader(value)"
 		>
 			{{value}}
@@ -58,7 +58,7 @@
 	</div>
 </div>
 
-<div ng-show="vm.firstRowAsHeader">
+<div ng-if="vm.headerRow">
 	<div class="mt-6 border-2 rounded-md overflow-hidden">
 		<div
 			class="flex items-center justify-between mt-3 mb-1 pl-3 pr-2 text-sm font-semibold opacity-60"
@@ -69,7 +69,7 @@
 
 		<div class="divide-y">
 			<div
-				ng-repeat="column in fileDetails.headerRow"
+				ng-repeat="column in vm.headerRow"
 				ngFor="{{action}}"
 				class="overflow-hidden cursor-pointer relative flex items-center py-2 pl-3 pr-2 gap-3"
 			>
@@ -163,10 +163,24 @@
 
 	<div class="mt-4">
 		<button
-			class="underline text-sm opacity-50"
+			class="border-b border-neutral-300 hover:border-neutral-400 text-neutral-500 hover:text-neutral-700 inline-flex items-center justify-between"
 			ng-click="setFirstRowAsHeader(null)"
 		>
-			Change header row
+			<svg
+				class="w-3 h-3 text-accent mr-1"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 20 20"
+				fill="currentColor"
+			>
+				<path
+					d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z"
+				/>
+				<path
+					d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z"
+				/>
+			</svg>
+
+			<span class="text-sm">Change header row</span>
 		</button>
 	</div>
 </div>

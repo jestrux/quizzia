@@ -3,7 +3,7 @@
 		<div class="fixed inset-0 z-50 bg-black/60">
 			<div class="h-full bg-white shadow-2xl srounded-tl-[50px]">
 				<div class="relative z-10 h-full flex">
-					<div class="w-[500px] overflow-x-hidden overflow-y-auto">
+					<div class="w-[460px] overflow-x-hidden overflow-y-auto">
 						<div
 							class="h-16 flex items-center px-3 border-b border-neutral-200"
 						>
@@ -32,7 +32,7 @@
 							</h2>
 						</div>
 
-						<div class="px-3.5">
+						<div class="px-3.5 mb-8">
 							<collapsible-step
 								ng-repeat="step in activeSteps"
 								is-last="$last"
@@ -83,7 +83,7 @@
 									</button>
 									<button
 										class="px-4 py-2 border border-primary bg-primary text-white hover:bg-primary/90 text-sm leading-none rounded focus:outline-none relative overflow-hidden"
-										ng-click="goNext()"
+										ng-click="goNext($index + 1)"
 									>
 										Next
 									</button>

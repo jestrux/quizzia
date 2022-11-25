@@ -70,14 +70,28 @@
 				</div>
 			</div>
 
-			<h3 class="text-2xl leading-none font-semibold opacity-50">
-				Add your data to get started
-			</h3>
-			<p class="mt-3 text-base leading-8 opacity-40">
-				Drag and drop CSV, XLS or XLSX file containing your existing
-				data. Alternatively, you can enter a Google sheets link or copy
-				/ paste from excel.
-			</p>
+			<div ng-show="currentStepId() != 'import-type'">
+				<h3 class="text-2xl leading-none font-semibold opacity-50">
+					Add your data to get started
+				</h3>
+				<p class="mt-3 text-base leading-8 opacity-40">
+					<span>
+						Drag and drop CSV, XLS or XLSX file containing your
+						existing data. Alternatively, you can enter a Google
+						sheets link or copy / paste from excel.
+					</span>
+				</p>
+			</div>
+			<div ng-show="currentStepId() == 'import-type'">
+				<h3 class="text-2xl leading-none font-semibold opacity-50">
+					Select type of data being imported
+				</h3>
+				<p class="mt-3 text-base leading-8 opacity-40">
+					The data type helps us make the importing flow much smoother
+					by allowing us to root out any iconsistencies early and help
+					you map more easily.
+				</p>
+			</div>
 		</div>
 		<div
 			class="w-full border-t border-neutral-300 px-16 pt-10 flex flex-col gap-6 items-center justify-center"
@@ -148,11 +162,18 @@
 			</div>
 		</div>
 
-		<div class="mb-12 text-center relative z-10 text-white">
-			<h3 class="text-3xl font-semibold mb-2 tracking-wide">
-				Data previewer
-			</h3>
-			<p class="opacity-70">
+		<div class="mb-12 text-center relative z-10">
+			<div
+				class="py-3 px-5 border-2 border-primary rounded-full bg-white inline-flex items-center justify-center mb-2 gap-2"
+			>
+				<img class="-ml-1 h-4" src="assets/img/logo.png" alt="" />
+				<h3
+					class="text-neutral-600 text-sm leading-none font-bold uppercase tracking-wide"
+				>
+					Data previewer
+				</h3>
+			</div>
+			<p class="text-white opacity-70">
 				This is how your data is going to appear on SetHero.
 			</p>
 		</div>
@@ -170,7 +191,7 @@
 					<span
 						class="text-neutral-900 text-xs uppercase tracking-wide font-bold"
 					>
-						{{column}}
+						{{column || '--'}}
 					</span>
 				</div>
 			</div>
