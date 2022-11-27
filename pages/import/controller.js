@@ -1,4 +1,6 @@
+import columnsByType from "./columns-by-type.js";
 import importSteps from "./steps.js";
+import FormValidator from "./form-validator.js";
 
 // https://docs.sheetjs.com/docs/api/utilities#array-of-objects-input
 class SheetProcessor {
@@ -22,7 +24,7 @@ class SheetProcessor {
 }
 
 export default function ImportController($scope, $routeParams, ImportService) {
-	$scope.currentStep = 1;
+	$scope.currentStep = 4;
 	$scope.allSteps = [...importSteps];
 	$scope.activeSteps = [...$scope.allSteps]; //.filter((_, i) => i != 1);
 	$scope.currentStepId = () => $scope.activeSteps[$scope.currentStep - 1].id;
@@ -77,9 +79,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 			data: asJSON,
 			sheetWithHeader: (header) => withHeader(header),
 		};
-		$scope.data = asJSON;
 		$scope.$apply();
-		// console.log("Workbook: ", asArray[0]);
 	};
 
 	$scope.clearSelectedFile = () => {
@@ -99,35 +99,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	};
 	$scope.decoArray = Array(300).fill(Math.random());
 	$scope.importTypes = ["Scenes", "Locations", "Cast", "Crew"];
-	$scope.columnsByType = {
-		Crew: ["Position", "First Name", "Last Name", "Email", "Phone"],
-		Cast: [
-			"Character Number",
-			"Character Name",
-			"First Name",
-			"Last Name",
-			"Email",
-			"Phone",
-		],
-		Locations: [
-			"Name",
-			"Street Address",
-			"City",
-			"State",
-			"Zipcode",
-			"Phone Number",
-		],
-		Scenes: [
-			"Scene Name",
-			"Slugline",
-			"Scene Description",
-			"Story Day",
-			"Pages",
-			"Location",
-			"Extras Count",
-			"Cast",
-		],
-	};
 	$scope.columns = [];
 	// $scope.columns = ["Position", "Person", "Email", "Phone", "Department"];
 	$scope.incomingColumns = [
@@ -186,7 +157,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 			...mappedColumns,
 			...(mappedColumns.length == 1 ? [""] : []), // minimum of two columns
 		];
-		$scope.dataFixColumn = $scope.mappedColumns[0];
 	};
 
 	$scope.$watch("columns", updateMetaColumns, true);
@@ -194,7 +164,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		if (!newValue?.length) return;
 
 		$scope.completedSteps = [1];
-		$scope.columns = $scope.columnsByType[newValue];
+		$scope.columns = Object.keys(columnsByType[newValue] || {});
 		$scope.vm.headerRow = null;
 	});
 
@@ -235,9 +205,82 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	);
 
 	const _validateData = () => {
-		if (!$scope.data?.length) return;
+		// if (!$scope.data?.length) return;
 
-		console.log("New data: ", $scope.data);
+		const data = [
+			{
+				"Character Number": 1,
+				Role: "Aaron Border",
+				"First Name": "James",
+				"Last Name": "Medina",
+				Email: "unicef.org",
+				Phone: "916-831-0627",
+				$$hashKey: "object:1307",
+			},
+			{
+				"Character Number": 1,
+				Role: "Aaron Border",
+				"First Name": "James",
+				"Last Name": "Medina",
+				Email: "jmedina",
+				Phone: "916-831-0627",
+			},
+		];
+		const reverseColumnMap = {
+			"Character Number": "Character Number",
+			"First Name": "First Name",
+			"Last Name": "Last Name",
+			Email: "Email",
+			Phone: "Phone",
+		};
+
+		const columns = columnsByType["Cast"];
+		const columnValidations = Object.entries(columns).reduce(
+			(agg, [key, { validation }]) => {
+				return {
+					...agg,
+					[key]: validation,
+				};
+			},
+			{}
+		);
+		const { validateField } = new FormValidator($scope, columnValidations);
+		$scope.invalidValues = {};
+
+		data.forEach((entry) => {
+			Object.entries(entry).forEach(([key, value]) => {
+				const col = reverseColumnMap[key];
+
+				if (col) {
+					const errors = validateField(col, value);
+					if (errors.length) {
+						if (!$scope.invalidValues[col]) {
+							$scope.invalidValues[col] = {
+								type: columns[col].type,
+								value,
+								entries: [],
+							};
+						}
+
+						$scope.invalidValues[col].entries = [
+							...($scope.invalidValues[col].entries || []),
+							{ value, errors },
+						];
+					}
+				}
+			});
+		});
+
+		$scope.invalidValueKeys = Object.keys($scope.invalidValues);
+		if ($scope.invalidValueKeys.length) {
+			$scope.dataFixColumn = $scope.invalidValueKeys[0];
+		}
+
+		console.log("Invalid values: ", $scope.invalidValues);
+	};
+
+	$scope.setDataFixColumn = function (column) {
+		$scope.dataFixColumn = column;
 	};
 
 	$scope.$watch("data", function () {
