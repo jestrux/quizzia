@@ -132,10 +132,16 @@ export default function ImportController($scope, $routeParams, ImportService) {
 			return;
 		}
 
-		$scope.vm.columnMap = $scope.vm.headerRow.reduce((agg, entry) => {
-			if ($scope.columns.includes(entry)) {
-				agg[entry] = entry;
-			}
+		const columns = columnsByType[$scope.vm.importType] || {};
+		$scope.vm.columnMap = Object.keys(columns).reduce((agg, col) => {
+			$scope.vm.headerRow.forEach((headerCol) => {
+				if (
+					headerCol == col ||
+					columns[col].similes.includes(headerCol)
+				) {
+					agg[headerCol] = col;
+				}
+			});
 
 			return agg;
 		}, {});
