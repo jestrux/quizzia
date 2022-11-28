@@ -270,7 +270,16 @@ export default function ImportController($scope, $routeParams, ImportService) {
 
 						$scope.invalidValues[col].entries = [
 							...($scope.invalidValues[col].entries || []),
-							{ value, errors },
+							{
+								value,
+								errors,
+								column: col,
+								validate: (val) => validateField(col, val),
+							},
+						];
+
+						$scope.invalidValues[col].entriesWithErrors = [
+							...$scope.invalidValues[col].entries,
 						];
 					}
 				}
@@ -281,12 +290,27 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		if ($scope.invalidValueKeys.length) {
 			$scope.dataFixColumn = $scope.invalidValueKeys[0];
 		}
-
-		console.log("Invalid values: ", $scope.invalidValues);
 	};
 
 	$scope.setDataFixColumn = function (column) {
 		$scope.dataFixColumn = column;
+	};
+
+	$scope.updateInvalidValue = function ({
+		column,
+		rowIndex,
+		newValue,
+		errors,
+	} = {}) {
+		$scope.invalidValues[column].entries[rowIndex].newValue = newValue;
+		$scope.invalidValues[column].entries[rowIndex].errors = errors;
+
+		const allEntries = $scope.invalidValues[column].entries;
+		$scope.invalidValues[column].entriesWithErrors = allEntries.filter(
+			({ errors }) => {
+				return errors.length > 0;
+			}
+		);
 	};
 
 	$scope.$watch("data", function () {

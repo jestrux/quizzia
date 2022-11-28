@@ -92,20 +92,36 @@ const importSteps = [
 		validator: {
 			watching: false,
 			validate(scope, cb = () => {}) {
-				// if (!this.watching) {
-				// 	const clearWatcher = scope.$watch("vm.importType", () => {
-				// 		this.validate(scope, cb);
-				// 	});
+				if (!this.watching) {
+					const clearWatcher = scope.$watch(
+						"invalidValues",
+						() => {
+							this.validate(scope, cb);
+						},
+						true
+					);
 
-				// 	this.clearErrorWatcher = () => {
-				// 		clearWatcher();
-				// 		this.watching = false;
-				// 	};
+					this.clearErrorWatcher = () => {
+						clearWatcher();
+						this.watching = false;
+					};
 
-				// 	this.watching = true;
-				// }
+					this.watching = true;
+				}
 
-				cb([]);
+				const invalidValues = Object.entries(scope.invalidValues)
+					.filter(([_, v]) => v.entriesWithErrors.length)
+					.map(([column]) => column);
+
+				cb(
+					invalidValues.length
+						? [
+								`${invalidValues.join(
+									", "
+								)} still have invalid rows`,
+						  ]
+						: []
+				);
 			},
 		},
 	},

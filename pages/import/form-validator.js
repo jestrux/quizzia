@@ -150,6 +150,7 @@ class FormValidator {
 	}
 
 	email(field, value) {
+		value = value.toString();
 		let errors = [];
 		const indexOfAt = value.indexOf("@");
 		if (indexOfAt === -1) errors.push(`${this.gl(field)} should have an @`);
