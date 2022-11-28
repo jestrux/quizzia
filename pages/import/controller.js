@@ -210,37 +210,9 @@ export default function ImportController($scope, $routeParams, ImportService) {
 		true
 	);
 
-	const _validateData = () => {
-		// if (!$scope.data?.length) return;
+	const _validateData = ({ data, reverseColumnMap, columns }) => {
+		if (!data?.length) return;
 
-		const data = [
-			{
-				"Character Number": 1,
-				Role: "Aaron Border",
-				"First Name": "James",
-				"Last Name": "Medina",
-				Email: "unicef.org",
-				Phone: "916-831-0627",
-				$$hashKey: "object:1307",
-			},
-			{
-				"Character Number": 1,
-				Role: "Aaron Border",
-				"First Name": "James",
-				"Last Name": "Medina",
-				Email: "jmedina",
-				Phone: "916-831-0627",
-			},
-		];
-		const reverseColumnMap = {
-			"Character Number": "Character Number",
-			"First Name": "First Name",
-			"Last Name": "Last Name",
-			Email: "Email",
-			Phone: "Phone",
-		};
-
-		const columns = columnsByType["Cast"];
 		const columnValidations = Object.entries(columns).reduce(
 			(agg, [key, { validation }]) => {
 				return {
@@ -262,8 +234,6 @@ export default function ImportController($scope, $routeParams, ImportService) {
 					if (errors.length) {
 						if (!$scope.invalidValues[col]) {
 							$scope.invalidValues[col] = {
-								type: columns[col].type,
-								value,
 								entries: [],
 							};
 						}
@@ -271,6 +241,7 @@ export default function ImportController($scope, $routeParams, ImportService) {
 						$scope.invalidValues[col].entries = [
 							...($scope.invalidValues[col].entries || []),
 							{
+								type: columns[col].type,
 								value,
 								errors,
 								column: col,
@@ -314,7 +285,42 @@ export default function ImportController($scope, $routeParams, ImportService) {
 	};
 
 	$scope.$watch("data", function () {
-		_validateData();
+		const tester = {
+			data: [
+				{
+					"Character Number": 1,
+					Role: "Aaron Border",
+					"First Name": "James",
+					"Last Name": "Medina",
+					Email: "unicef.org",
+					Phone: "916-831-0627",
+					$$hashKey: "object:1307",
+				},
+				{
+					"Character Number": 1,
+					Role: "Aaron Border",
+					"First Name": "James",
+					"Last Name": "Medina",
+					Email: "jmedina",
+					Phone: "916-831-0627",
+				},
+			],
+			reverseColumnMap: {
+				"Character Number": "Character Number",
+				"First Name": "First Name",
+				"Last Name": "Last Name",
+				Email: "Email",
+				Phone: "Phone",
+			},
+			columns: columnsByType["Cast"],
+		};
+
+		_validateData(tester);
+		// _validateData({
+		// 	data: $scope.data,
+		// 	columns: columnsByType[$scope.vm.importType],
+		// 	reverseColumnMap: $scope.reverseColumnMap,
+		// });
 	});
 
 	$scope.positionChanged = function (newValue) {

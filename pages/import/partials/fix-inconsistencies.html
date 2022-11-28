@@ -3,7 +3,7 @@
 >
 	<button
 		ng-repeat="column in invalidValueKeys"
-		class="-mb-px whitespace-nowrap h-10 px-1 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
+		class="-mb-px whitespace-nowrap h-10 text-sm leading-none font-medium border-b-2 flex items-center justify-center"
 		ng-class="{
 			'text-accents border-accent': dataFixColumn == column,
 			'border-transparent text-neutral-400 hover:text-neutral-500/90': dataFixColumn != column,
@@ -73,63 +73,5 @@
 			row-index="$index"
 			on-change="updateInvalidValue"
 		></row-fix>
-	</div>
-</div>
-
-<!-- <p
-	class="mb-2 text-center py-3.5 bg-neutral-100 text-neutral-400"
-	ng-show="dataFixColumn != mappedColumns[0]"
->
-	There are no invalid {{dataFixColumn}} rows.
-</p> -->
-
-<div ng-show="dataFixColumn == mappedColumns[0]">
-	<p class="py-3.5 text-neutral-500">
-		We found
-		<span class="font-bold">{{invalidPositions.length}}</span>
-		invalid {{dataFixColumn}} {{ invalidPositions.length == 1 ? 'row' :
-		'rows' }} in your data.
-	</p>
-
-	<div class="border-2 rounded-md overflow-hidden">
-		<div
-			class="flex items-center justify-between mt-3 mb-3 pl-3 pr-2 text-sm font-semibold opacity-60"
-		>
-			<span>Invalid value</span>
-			<span class="min-w-[180px] pl-1"> New value </span>
-		</div>
-
-		<div class="border-t divide-y">
-			<position-input
-				ng-repeat="position in invalidPositions"
-				on-change="positionChanged"
-			>
-				<span
-					class="mr-2 text-sm font-semibold text-neutral-600/80 mb-1"
-				>
-					Power saintly
-				</span>
-
-				<div class="flex-1 flex items-center text-neutral-400/60">
-					<div
-						class="opacity-60 flex-1 -mr-3 h-[2px] bg-current"
-					></div>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="w-6 h-6"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M8.25 4.5l7.5 7.5-7.5 7.5"
-						/>
-					</svg>
-				</div>
-			</position-input>
-		</div>
 	</div>
 </div>

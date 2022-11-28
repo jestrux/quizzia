@@ -21,8 +21,8 @@ const columnsByType = {
 	Cast: {
 		"Character Number": {
 			similes: ["Number"],
-			type: "text",
-			validation: "number|min:2",
+			type: "position",
+			validation: "min:2",
 		},
 		"Character Name": {
 			similes: ["Name", "Role"],
